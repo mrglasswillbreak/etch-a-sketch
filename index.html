@@ -1,196 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Etch-a-Sketch — Fixed Grid</title>
-  <style>
-    /* reset */
-    html,body {
-      margin: 0;
-      height: 100%;
-      width: 100%;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Etch-a-Sketch</title>
 
-    /* viewport wrapper centers the grid (keeps squares perfect) */
-    #viewport {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
-      touch-action: none; /* prevents scrolling while drawing on touch */
-      -webkit-user-select: none;
-      user-select: none;
-    }
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden; /* prevents scroll on touch */
+  }
 
-    /* actual grid container: size is set by JS to be exact square (cellSize * gridSize) */
-    #container {
-      display: grid;
-      gap: 0;              /* no gaps between cells */
-      box-sizing: border-box;
-      /* border is optional; subtle lines won't cause layout gaps */
-      border: 1px solid rgba(0,0,0,0.06);
-      touch-action: none;
-    }
+  #container {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    touch-action: none; /* critical for mobile drawing */
+  }
 
-    /* grid cells */
-    .cell {
-      box-sizing: border-box;
-      outline: 0; /* avoid outline spacing */
-      /* subtle inner border to show cell separators without affecting layout */
-      border: 0.5px solid rgba(0,0,0,0.06);
-      background: rgb(255,255,255);
-      transition: background-color 120ms linear;
-      width: 100%;
-      height: 100%;
-    }
+  .cell {
+    background: white;
+    border: 0.5px solid rgba(0,0,0,0.05);
+    box-sizing: border-box;
+    transition: background-color 0.08s linear;
+  }
 
-    /* control button */
-    #button {
-      position: fixed;
-      z-index: 20;
-      top: 12px;
-      left: 12px;
-      padding: 8px 12px;
-      font-size: 14px;
-      border-radius: 6px;
-      border: 1px solid rgba(0,0,0,0.12);
-      background: white;
-      cursor: pointer;
-    }
-
-    /* small responsive nicety so button doesn't cover the grid cell when grid is centered */
-    @media (max-width:420px) {
-      #button { font-size:13px; padding:6px 10px; }
-    }
-  </style>
+  #button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    padding: 8px 12px;
+  }
+</style>
 </head>
+
 <body>
-  <button id="button">Set Grid Size</button>
-  <div id="viewport">
-    <div id="container" role="grid" aria-label="Etch-a-Sketch grid"></div>
-  </div>
 
-  <script>
-    const viewport = document.getElementById('viewport');
-    const container = document.getElementById('container');
-    const button = document.getElementById('button');
+<button id="button">Set Grid Size</button>
+<div id="container"></div>
 
-    let gridSize = 16;        // default
-    const MAX_DARKNESS = 10;  // 10 steps of darkening
-    let isDrawing = false;    // true while touch/mouse button is down (for continuous drawing)
+<script>
+const container = document.getElementById("container");
+const button = document.getElementById("button");
 
-    // paint a single cell (increment darkness up to MAX_DARKNESS)
-    function paintCell(cell) {
-      if (!cell || !cell.classList.contains('cell')) return;
-      let darkness = Number(cell.dataset.darkness) || 0;
-      if (darkness >= MAX_DARKNESS) return;
-      darkness += 1;
-      cell.dataset.darkness = darkness;
-      const shade = Math.round(255 - (darkness / MAX_DARKNESS) * 255);
-      cell.style.backgroundColor = `rgb(${shade}, ${shade}, ${shade})`;
-    }
+let gridSize = 16;
+let isDrawing = false;
+const MAX_DARKNESS = 10;
 
-    // create a perfectly square grid centered in viewport (no fractional rounding gaps)
-    function createGrid(size) {
-      // clear
-      container.innerHTML = '';
+function createGrid(size) {
+  container.innerHTML = "";
+  container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+  container.style.gridTemplateRows = `repeat(${size}, 1fr)`;
 
-      // compute cell size (whole pixels) using the smaller viewport side
-      const vw = viewport.clientWidth;
-      const vh = viewport.clientHeight;
-      // keep the grid square based on the smaller side to preserve square cells
-      const totalSizePx = Math.floor(Math.min(vw, vh));
-      const cellSize = Math.floor(totalSizePx / size);
+  for (let i = 0; i < size * size; i++) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    cell.dataset.darkness = 0;
+    container.appendChild(cell);
+  }
+}
 
-      // total pixel-perfect grid size (may be slightly smaller than viewport; it's centered)
-      const gridPixelSize = cellSize * size;
+function paintCell(cell) {
+  if (!cell || !cell.classList.contains("cell")) return;
 
-      // apply exact pixel sizing so there are no fractional pixels/gaps
-      container.style.width = gridPixelSize + 'px';
-      container.style.height = gridPixelSize + 'px';
+  let darkness = Number(cell.dataset.darkness);
+  if (darkness >= MAX_DARKNESS) return;
 
-      // set CSS Grid to exact columns/rows with pixel sizes
-      container.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
-      container.style.gridTemplateRows = `repeat(${size}, ${cellSize}px)`;
+  darkness++;
+  cell.dataset.darkness = darkness;
 
-      // create cells
-      const total = size * size;
-      const frag = document.createDocumentFragment();
-      for (let i = 0; i < total; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.dataset.darkness = 0; // store darkness state here
-        cell.setAttribute('role', 'gridcell');
+  const shade = 255 - (darkness / MAX_DARKNESS) * 255;
+  cell.style.backgroundColor = `rgb(${shade}, ${shade}, ${shade})`;
+}
 
-        // pointerenter paints on mouse hover (like before).
-        // For touch/pen, we only paint on pointerenter when isDrawing is true (i.e. finger pressed).
-        cell.addEventListener('pointerenter', (e) => {
-          if (e.pointerType === 'mouse') {
-            // preserve desktop hover behaviour
-            paintCell(cell);
-          } else {
-            // for touch/pen, only paint while actively drawing (dragging)
-            if (isDrawing) paintCell(cell);
-          }
-        });
+/* ---------- Ultra Responsive Touch + Mouse Handling ---------- */
 
-        // pointerdown paints immediately (single tap or start of drag)
-        cell.addEventListener('pointerdown', (e) => {
-          // prevent default to avoid emulated mouse events & scrolling
-          e.preventDefault();
-          // mark drawing active for touch/pen; mouse will remain false unless pressed
-          isDrawing = true;
-          paintCell(cell);
-        });
+container.addEventListener("pointerdown", (e) => {
+  isDrawing = true;
+  paintCell(e.target);
+});
 
-        frag.appendChild(cell);
-      }
+container.addEventListener("pointermove", (e) => {
+  if (!isDrawing) return;
 
-      container.appendChild(frag);
-    }
+  const element = document.elementFromPoint(e.clientX, e.clientY);
+  paintCell(element);
+});
 
-    // initial render
-    createGrid(gridSize);
+window.addEventListener("pointerup", () => {
+  isDrawing = false;
+});
 
-    // global pointerup to stop drawing (works for touch & mouse)
-    window.addEventListener('pointerup', () => {
-      isDrawing = false;
-    });
-    window.addEventListener('pointercancel', () => {
-      isDrawing = false;
-    });
+button.addEventListener("click", () => {
+  const input = Number(prompt("Enter Grid Size (1 - 100):"));
+  if (!Number.isInteger(input) || input < 1 || input > 100) {
+    alert("Please enter a number between 1 and 100.");
+    return;
+  }
+  gridSize = input;
+  createGrid(gridSize);
+});
 
-    // resize handler: recreate grid so it stays pixel-perfect and centered
-    window.addEventListener('resize', () => {
-      // small debounce to avoid thrash on resize
-      clearTimeout(window._gridResizeTimer);
-      window._gridResizeTimer = setTimeout(() => createGrid(gridSize), 120);
-    });
+createGrid(gridSize);
+</script>
 
-    // button to set size
-    button.addEventListener('click', () => {
-      const input = Number(prompt('Enter Grid Size (1 - 100):', gridSize));
-      if (!Number.isInteger(input) || input < 1 || input > 100) {
-        alert('Please enter an integer between 1 and 100.');
-        return;
-      }
-      gridSize = input;
-      createGrid(gridSize);
-    });
-
-    // accessibility: allow keyboard to clear grid (R)
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'r' || e.key === 'R') {
-        // reset darkness
-        document.querySelectorAll('.cell').forEach(c => {
-          c.dataset.darkness = 0;
-          c.style.backgroundColor = 'rgb(255,255,255)';
-        });
-      }
-    });
-  </script>
 </body>
 </html>
