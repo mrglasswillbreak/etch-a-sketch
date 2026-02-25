@@ -4,12 +4,20 @@
   <meta charset="UTF-8" />
   <title>Etch-a-Sketch Grid</title>
   <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+
     #container {
-      width: 400px;
-      height: 400px;
+      width: 100vw;
+      height: 100vh;
       display: flex;
       flex-wrap: wrap;
       border: 2px solid black;
+      touch-action: none; /* prevents scrolling while drawing on mobile */
     }
 
     .square {
@@ -17,6 +25,17 @@
       border: 1px solid #ddd;
       background-color: rgb(255, 255, 255);
       transition: background-color 0.2s;
+    }
+
+    #button {
+			font-size: 40px;
+			font-weight: bold;
+      position: absolute;
+      z-index: 10;
+      top: 10px;
+      left: 10px;
+      padding: 50px 60px;
+      font-size: 16px;
     }
   </style>
 </head>
@@ -31,22 +50,25 @@
 
     function createGrid(size) {
       container.innerHTML = ""; // clear previous squares
-      const squareSize = 400 / size;
+
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+      const squareSize = Math.floor(Math.min(containerWidth, containerHeight) / size);
 
       for (let i = 0; i < size * size; i++) {
         const square = document.createElement("div");
         square.classList.add("square");
         square.style.width = `${squareSize}px`;
         square.style.height = `${squareSize}px`;
+        square.dataset.darkness = 0;
 
-        square.dataset.darkness = 0; // track how dark this square is
-
-        square.addEventListener("mouseover", () => {
+        // Works for mouse hover & touch
+        square.addEventListener("pointerenter", () => {
           let darkness = Number(square.dataset.darkness);
           if (darkness < 10) {
             darkness += 1;
             square.dataset.darkness = darkness;
-            const shade = 255 - darkness * 25.5; // 0 = black, 255 = white
+            const shade = 255 - darkness * 25.5;
             square.style.backgroundColor = `rgb(${shade}, ${shade}, ${shade})`;
           }
         });
@@ -55,7 +77,7 @@
       }
     }
 
-    // initial grid
+    // Initial grid
     createGrid(gridSize);
 
     button.addEventListener("click", () => {
@@ -67,6 +89,9 @@
       gridSize = newGridSize;
       createGrid(gridSize);
     });
+
+    // Optional: Recreate grid on window resize to fit new viewport
+    window.addEventListener("resize", () => createGrid(gridSize));
   </script>
 </body>
 </html>
