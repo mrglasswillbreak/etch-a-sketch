@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Etch a Sketch</title>
+  <title>Etch-a-Sketch Grid</title>
   <style>
     #container {
       width: 400px;
@@ -11,23 +11,26 @@
       flex-wrap: wrap;
       border: 2px solid black;
     }
-    
+
     .square {
       box-sizing: border-box;
       border: 1px solid #ddd;
+      background-color: rgb(255, 255, 255);
+      transition: background-color 0.2s;
     }
   </style>
 </head>
 <body>
   <button id="button">Set Grid Size</button>
   <div id="container"></div>
+
   <script>
-    const button = document.getElementById("button");
     const container = document.querySelector("#container");
+    const button = document.getElementById("button");
     let gridSize = 16;
 
     function createGrid(size) {
-      container.innerHTML = ""; // clear old squares
+      container.innerHTML = ""; // clear previous squares
       const squareSize = 400 / size;
 
       for (let i = 0; i < size * size; i++) {
@@ -36,12 +39,16 @@
         square.style.width = `${squareSize}px`;
         square.style.height = `${squareSize}px`;
 
-        square.addEventListener("mouseover", () => {
-          square.style.backgroundColor = "red";
-        });
+        square.dataset.darkness = 0; // track how dark this square is
 
-        square.addEventListener("mouseout", () => {
-          square.style.backgroundColor = "grey";
+        square.addEventListener("mouseover", () => {
+          let darkness = Number(square.dataset.darkness);
+          if (darkness < 10) {
+            darkness += 1;
+            square.dataset.darkness = darkness;
+            const shade = 255 - darkness * 25.5; // 0 = black, 255 = white
+            square.style.backgroundColor = `rgb(${shade}, ${shade}, ${shade})`;
+          }
         });
 
         container.appendChild(square);
