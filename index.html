@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Document</title>
+	<style>
+	#container {
+	  width: 400px;
+	  height: 400px;
+	  display: flex;
+	  flex-wrap: wrap;
+	  border: 2px solid black;
+	}
+	
+	.square {
+		
+	  box-sizing: border-box;
+	  border: 1px solid #ddd;
+	}
+	</style>
+</head>
+<body>
+	<button id="button">Set Grid Size</button>
+	<div id="container"></div>
+	<script>
+		let gridSize = 16;
+		let squareSize = 400 / gridSize;
+		const button = document.getElementById("button");
+		const container = document.querySelector("#container");
+		
+		button.addEventListener("click", () => {
+			const newGridSize = Number(prompt("Enter Grid Size 1 - 100"));
+			if (!newGridSize || newGridSize < 1 || newGridSize > 100) {
+				alert("Please Enter a number between 1 and 100");
+				return;
+			}
+			gridSize = newGridSize;
+			squareSize = 400 / gridSize;
+		});
+		
+		
+		
+		
+		for (let i = 0; i < gridSize * gridSize; i++) {
+			const square = document.createElement("div");
+			square.classList.add("square");
+			
+			square.style.width = `${squareSize}px`;
+			square.style.height = `${squareSize}px`;
+			
+			container.appendChild(square);
+		}
+		
+		square.addEventListener("mouseover", () => {square.style.backgroundColor = "red";});
+		square.addEventListener("mouseout", () => {square.style.backgroundColor = "grey";});
+	</script>
+</body>
+</html>
