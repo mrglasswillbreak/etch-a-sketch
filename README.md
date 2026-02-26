@@ -35,14 +35,6 @@ This project dynamically generates a customizable grid that fills the entire vie
 
 ---
 
-## 📁 Repository
-
-📌 Source code on GitHub:
-
-👉 https://github.com/mrglasswillbreak/etch-a-sketch
-
----
-
 ## 🧠 How It Works
 
 ### Grid Generation
