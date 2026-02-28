@@ -1,80 +1,42 @@
-# 🎨 Etch-a-Sketch — Responsive Grid Drawing App
+# 🎨 Etch-a-Sketch+
 
-A fully responsive, touch-optimized drawing application built with **HTML, CSS Grid, and Vanilla JavaScript**.
+An upgraded, responsive Etch-a-Sketch built with **HTML, CSS Grid, and vanilla JavaScript**.
 
-This project dynamically generates a customizable grid that fills the entire viewport and supports smooth drawing on both desktop and mobile devices.
+## ✨ What's New
 
----
+- Interactive top control panel (desktop + touch friendly)
+- Adjustable grid size slider (8–100)
+- Multiple drawing modes:
+  - Grayscale darkening
+  - Solid color (with color picker)
+  - Rainbow random colors
+  - Eraser
+- Brush size control (1–4)
+- Clear board action
+- Grid line visibility toggle
+- Export current drawing as a PNG image
+- Live board stats (`filled` / `total` cells)
+- Dark mode-friendly UI using `prefers-color-scheme`
 
-## 🚀 Features
+## 🚀 Run Locally
 
-- 📐 Dynamic grid resizing (1–100 squares per side)
-- 🖱️ Mouse click & drag drawing
-- 📱 Ultra-smooth touch drawing support
-- 🎨 Progressive 10-level grayscale darkening effect
-- 📏 Full viewport grid (100vw × 100vh)
-- ⚡ Event delegation for performance optimization
-- 🔄 Responsive to screen resizing
-- 🧠 No external libraries — pure JavaScript
+Open `index.html` directly in your browser, or serve with a simple server:
 
----
+```bash
+python3 -m http.server 8000
+```
 
-## 🛠️ Technologies Used
+Then visit: `http://localhost:8000`
 
-- **HTML5**
-- **CSS3 (CSS Grid Layout)**
-- **JavaScript (DOM Manipulation + Pointer Events API)**
+## 🛠️ Stack
 
----
+- HTML5
+- CSS3 (Grid + modern UI styling)
+- JavaScript (DOM APIs + Pointer Events)
 
-## 🚀 Live Demo
+## 📌 Next Ideas
 
-📍 Live version hosted on GitHub Pages:
-
-👉 https://mrglasswillbreak.github.io/etch-a-sketch/
-
----
-
-## 🧠 How It Works
-
-### Grid Generation
-
-- Uses CSS Grid with:
-  ```js
-  gridTemplateColumns = repeat(size, 1fr)
-  gridTemplateRows = repeat(size, 1fr)
----
-
-## 🧪 Future Improvements
-
-- 🌈 Random color mode
-- 🎨 Color picker tool
-- 🧽 Clear/reset button
-- 🎚️ Adjustable drawing intensity slider
-- 💾 Export drawing as PNG
-- 🌓 Dark mode toggle
-- 🎛️ UI control panel
-
----
-
-## 📚 Key Concepts Practiced
-
-- Dynamic DOM manipulation
-- CSS Grid layout system
-- Pointer Events API
-- Event delegation
-- Responsive UI design
-- Mobile interaction handling
-- Performance optimization
-
----
-
-## 👤 Author
-
-**Moe — Student Developer**  
-Web & JavaScript Focused  
-Aspiring Full-Stack Developer
-
----
-
-⭐ If you found this project interesting, feel free to ⭐star or contribute!
+- Undo/redo history
+- Symmetry/mirror drawing mode
+- Fill bucket tool
+- Save/load from localStorage
