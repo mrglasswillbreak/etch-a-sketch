@@ -1,80 +1,90 @@
-# 🎨 Etch-a-Sketch — Responsive Grid Drawing App
+# Etch-a-Sketch+
 
-A fully responsive, touch-optimized drawing application built with **HTML, CSS Grid, and Vanilla JavaScript**.
+A modern, responsive **Etch-a-Sketch web app** built with plain HTML, CSS, and JavaScript.
+It supports desktop and touch drawing with multiple brush modes, quick controls, and PNG export.
 
-This project dynamically generates a customizable grid that fills the entire viewport and supports smooth drawing on both desktop and mobile devices.
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Usage Guide](#usage-guide)
+- [Project Structure](#project-structure)
+- [Roadmap](#roadmap)
 
----
+## Overview
+Etch-a-Sketch+ renders a dynamic grid canvas and lets users draw by dragging the pointer across cells.
+The app includes creative drawing modes, brush sizing, and utility actions (clear, toggle grid lines, export PNG).
 
-## 🚀 Features
+## Features
 
-- 📐 Dynamic grid resizing (1–100 squares per side)
-- 🖱️ Mouse click & drag drawing
-- 📱 Ultra-smooth touch drawing support
-- 🎨 Progressive 10-level grayscale darkening effect
-- 📏 Full viewport grid (100vw × 100vh)
-- ⚡ Event delegation for performance optimization
-- 🔄 Responsive to screen resizing
-- 🧠 No external libraries — pure JavaScript
+### Drawing
+- **Grayscale mode** with progressive darkening
+- **Solid color mode** with color picker
+- **Rainbow mode** for random colors per stroke
+- **Eraser mode** for quick cleanup
+- **Brush size control** (1–4)
 
----
+### Canvas Controls
+- **Grid size slider** (8–100) + Apply action
+- **Clear board** in one click
+- **Show/Hide grid lines**
+- **Live stats** (`filled / total` cells)
+- **Save PNG** export of the current artwork
 
-## 🛠️ Technologies Used
+### UX
+- Touch-friendly pointer interactions
+- Responsive layout with compact top control bar
+- Dark-mode aware UI via `prefers-color-scheme`
 
+## Screenshots
+
+> The screenshots below are stored in-repo, so they render directly on GitHub and in Markdown viewers.
+
+### Default Interface
+![Etch-a-Sketch default interface](assets/screenshots/default-ui.svg)
+
+### Customized Controls State
+![Etch-a-Sketch customized controls](assets/screenshots/customized-ui.svg)
+
+## Tech Stack
 - **HTML5**
-- **CSS3 (CSS Grid Layout)**
-- **JavaScript (DOM Manipulation + Pointer Events API)**
+- **CSS3** (Grid, custom properties, responsive layout)
+- **Vanilla JavaScript** (DOM APIs, Pointer Events)
 
----
+## Getting Started
 
-## 🚀 Live Demo
+### Option 1: Open directly
+Open `index.html` in your browser.
 
-📍 Live version hosted on GitHub Pages:
+### Option 2: Run a local server (recommended)
+```bash
+python3 -m http.server 8000
+```
+Then open: `http://localhost:8000`
 
-👉 https://mrglasswillbreak.github.io/etch-a-sketch/
+## Usage Guide
+1. Adjust **Grid** size and click **Apply**.
+2. Choose a drawing **Mode**.
+3. (Optional) Pick a color in **Color** mode.
+4. Set **Brush** size.
+5. Draw on the board using mouse or touch.
+6. Use **Clear**, **Hide/Show Grid Lines**, or **Save PNG** as needed.
 
----
+## Project Structure
+```text
+.
+├── assets/
+│   └── screenshots/
+│       ├── default-ui.svg
+│       └── customized-ui.svg
+├── index.html
+└── README.md
+```
 
-## 🧠 How It Works
-
-### Grid Generation
-
-- Uses CSS Grid with:
-  ```js
-  gridTemplateColumns = repeat(size, 1fr)
-  gridTemplateRows = repeat(size, 1fr)
----
-
-## 🧪 Future Improvements
-
-- 🌈 Random color mode
-- 🎨 Color picker tool
-- 🧽 Clear/reset button
-- 🎚️ Adjustable drawing intensity slider
-- 💾 Export drawing as PNG
-- 🌓 Dark mode toggle
-- 🎛️ UI control panel
-
----
-
-## 📚 Key Concepts Practiced
-
-- Dynamic DOM manipulation
-- CSS Grid layout system
-- Pointer Events API
-- Event delegation
-- Responsive UI design
-- Mobile interaction handling
-- Performance optimization
-
----
-
-## 👤 Author
-
-**Moe — Student Developer**  
-Web & JavaScript Focused  
-Aspiring Full-Stack Developer
-
----
-
-⭐ If you found this project interesting, feel free to ⭐star or contribute!
+## Roadmap
+- Undo / redo history
+- Mirror and symmetry drawing
+- Fill bucket tool
+- Persist sketches with localStorage

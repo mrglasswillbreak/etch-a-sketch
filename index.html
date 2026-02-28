@@ -3,108 +3,333 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Etch-a-Sketch</title>
-
+<title>Etch-a-Sketch+</title>
 <style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f5f7fb;
+    --panel: rgba(255, 255, 255, 0.92);
+    --panel-border: rgba(17, 24, 39, 0.12);
+    --text: #111827;
+    --muted: #6b7280;
+    --cell-border: rgba(0, 0, 0, 0.08);
+    --accent: #2563eb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a;
+      --panel: rgba(15, 23, 42, 0.88);
+      --panel-border: rgba(255, 255, 255, 0.14);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --cell-border: rgba(255, 255, 255, 0.08);
+      --accent: #60a5fa;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
   html, body {
     margin: 0;
     height: 100%;
-    overflow: hidden; /* prevents scroll on touch */
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--panel-border);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+  }
+
+  label {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  input[type="range"] {
+    width: 110px;
+  }
+
+  button, select, input[type="color"] {
+    border: 1px solid var(--panel-border);
+    background: color-mix(in srgb, var(--panel) 65%, transparent);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button.primary {
+    background: var(--accent);
+    color: white;
+    border-color: transparent;
+  }
+
+  #stats {
+    margin-left: auto;
+    font-size: 0.85rem;
+    color: var(--muted);
   }
 
   #container {
-    width: 100vw;
-    height: 100vh;
+    flex: 1;
     display: grid;
-    touch-action: none; /* critical for mobile drawing */
+    min-height: 0;
+    touch-action: none;
+    background: white;
   }
 
   .cell {
-    background: white;
-    border: 0.5px solid rgba(0,0,0,0.05);
-    box-sizing: border-box;
-    transition: background-color 0.08s linear;
+    border: 0.5px solid var(--cell-border);
+    transition: background-color 0.07s linear;
+    background-color: white;
   }
 
-  #button {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 10;
-    padding: 8px 12px;
+  .hide-grid .cell {
+    border-color: transparent;
   }
 </style>
 </head>
-
 <body>
+  <div id="controls">
+    <div class="group">
+      <label for="gridSize">Grid</label>
+      <input id="gridSize" type="range" min="8" max="100" value="40" />
+      <strong id="gridValue">40×40</strong>
+      <button id="applyGrid" class="primary">Apply</button>
+    </div>
 
-<button id="button">Set Grid Size</button>
-<div id="container"></div>
+    <div class="group">
+      <label for="mode">Mode</label>
+      <select id="mode">
+        <option value="grayscale">Grayscale</option>
+        <option value="color">Color</option>
+        <option value="rainbow">Rainbow</option>
+        <option value="erase">Eraser</option>
+      </select>
+      <input id="colorPicker" type="color" value="#1d4ed8" />
+    </div>
+
+    <div class="group">
+      <label for="brushSize">Brush</label>
+      <input id="brushSize" type="range" min="1" max="4" value="1" />
+      <strong id="brushValue">1</strong>
+    </div>
+
+    <button id="clear">Clear</button>
+    <button id="toggleGrid">Hide Grid Lines</button>
+    <button id="download">Save PNG</button>
+
+    <div id="stats">0 filled</div>
+  </div>
+
+  <div id="container"></div>
 
 <script>
 const container = document.getElementById("container");
-const button = document.getElementById("button");
+const gridSizeInput = document.getElementById("gridSize");
+const gridValue = document.getElementById("gridValue");
+const applyGrid = document.getElementById("applyGrid");
+const modeSelect = document.getElementById("mode");
+const colorPicker = document.getElementById("colorPicker");
+const brushSizeInput = document.getElementById("brushSize");
+const brushValue = document.getElementById("brushValue");
+const clearButton = document.getElementById("clear");
+const toggleGridButton = document.getElementById("toggleGrid");
+const downloadButton = document.getElementById("download");
+const stats = document.getElementById("stats");
 
-let gridSize = 80;
+let gridSize = Number(gridSizeInput.value);
+let brushSize = Number(brushSizeInput.value);
 let isDrawing = false;
-const MAX_DARKNESS = 10;
+let hideGrid = false;
+
+function toRgbObject(color) {
+  if (color.startsWith("#")) {
+    const hex = color.slice(1);
+    const value = hex.length === 3 ? hex.split("").map((c) => c + c).join("") : hex;
+    return {
+      r: parseInt(value.slice(0, 2), 16),
+      g: parseInt(value.slice(2, 4), 16),
+      b: parseInt(value.slice(4, 6), 16)
+    };
+  }
+
+  const match = color.match(/\d+/g);
+  if (!match || match.length < 3) return { r: 255, g: 255, b: 255 };
+  return { r: Number(match[0]), g: Number(match[1]), b: Number(match[2]) };
+}
 
 function createGrid(size) {
   container.innerHTML = "";
   container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
   container.style.gridTemplateRows = `repeat(${size}, 1fr)`;
 
-  for (let i = 0; i < size * size; i++) {
-    const cell = document.createElement("div");
-    cell.classList.add("cell");
-    cell.dataset.darkness = 0;
-    container.appendChild(cell);
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.row = row;
+      cell.dataset.col = col;
+      cell.dataset.darkness = 0;
+      container.appendChild(cell);
+    }
   }
+
+  updateStats();
 }
 
-function paintCell(cell) {
+function updateStats() {
+  const total = gridSize * gridSize;
+  const filled = container.querySelectorAll('.cell[data-darkness]:not([data-darkness="0"])').length;
+  stats.textContent = `${filled} filled • ${total} total`;
+}
+
+function paintOne(cell) {
+  if (!cell || !cell.classList.contains("cell")) return;
+  const mode = modeSelect.value;
+
+  if (mode === "erase") {
+    cell.style.backgroundColor = "white";
+    cell.dataset.darkness = 0;
+    return;
+  }
+
+  if (mode === "grayscale") {
+    const maxDarkness = 12;
+    let darkness = Number(cell.dataset.darkness || 0);
+    if (darkness < maxDarkness) darkness += 1;
+    cell.dataset.darkness = darkness;
+
+    const shade = Math.round(255 - (darkness / maxDarkness) * 255);
+    cell.style.backgroundColor = `rgb(${shade}, ${shade}, ${shade})`;
+    return;
+  }
+
+  if (mode === "rainbow") {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    cell.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+    cell.dataset.darkness = 1;
+    return;
+  }
+
+  const selected = toRgbObject(colorPicker.value);
+  cell.style.backgroundColor = `rgb(${selected.r}, ${selected.g}, ${selected.b})`;
+  cell.dataset.darkness = 1;
+}
+
+function paintAt(cell) {
   if (!cell || !cell.classList.contains("cell")) return;
 
-  let darkness = Number(cell.dataset.darkness);
-  if (darkness >= MAX_DARKNESS) return;
+  const centerRow = Number(cell.dataset.row);
+  const centerCol = Number(cell.dataset.col);
+  const radius = brushSize - 1;
 
-  darkness++;
-  cell.dataset.darkness = darkness;
+  for (let r = centerRow - radius; r <= centerRow + radius; r++) {
+    for (let c = centerCol - radius; c <= centerCol + radius; c++) {
+      if (r < 0 || c < 0 || r >= gridSize || c >= gridSize) continue;
+      const target = container.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+      paintOne(target);
+    }
+  }
 
-  const shade = 255 - (darkness / MAX_DARKNESS) * 255;
-  cell.style.backgroundColor = `rgb(${shade}, ${shade}, ${shade})`;
+  updateStats();
 }
 
-/* ---------- Ultra Responsive Touch + Mouse Handling ---------- */
-
-container.addEventListener("pointerdown", (e) => {
+container.addEventListener("pointerdown", (event) => {
   isDrawing = true;
-  paintCell(e.target);
+  container.setPointerCapture(event.pointerId);
+  paintAt(event.target);
 });
 
-container.addEventListener("pointermove", (e) => {
+container.addEventListener("pointermove", (event) => {
   if (!isDrawing) return;
-
-  const element = document.elementFromPoint(e.clientX, e.clientY);
-  paintCell(element);
+  const hovered = document.elementFromPoint(event.clientX, event.clientY);
+  paintAt(hovered);
 });
 
 window.addEventListener("pointerup", () => {
   isDrawing = false;
 });
 
-button.addEventListener("click", () => {
-  const input = Number(prompt("Enter Grid Size (1 - 100):"));
-  if (!Number.isInteger(input) || input < 1 || input > 100) {
-    alert("Please enter a number between 1 and 100.");
-    return;
-  }
-  gridSize = input;
+applyGrid.addEventListener("click", () => {
+  gridSize = Number(gridSizeInput.value);
   createGrid(gridSize);
+});
+
+gridSizeInput.addEventListener("input", () => {
+  gridValue.textContent = `${gridSizeInput.value}×${gridSizeInput.value}`;
+});
+
+brushSizeInput.addEventListener("input", () => {
+  brushSize = Number(brushSizeInput.value);
+  brushValue.textContent = brushSize;
+});
+
+clearButton.addEventListener("click", () => createGrid(gridSize));
+
+toggleGridButton.addEventListener("click", () => {
+  hideGrid = !hideGrid;
+  container.classList.toggle("hide-grid", hideGrid);
+  toggleGridButton.textContent = hideGrid ? "Show Grid Lines" : "Hide Grid Lines";
+});
+
+downloadButton.addEventListener("click", () => {
+  const canvas = document.createElement("canvas");
+  const pixelSize = 8;
+  canvas.width = gridSize * pixelSize;
+  canvas.height = gridSize * pixelSize;
+  const ctx = canvas.getContext("2d");
+
+  for (const cell of container.children) {
+    const row = Number(cell.dataset.row);
+    const col = Number(cell.dataset.col);
+    const fill = getComputedStyle(cell).backgroundColor || "rgb(255, 255, 255)";
+    ctx.fillStyle = fill;
+    ctx.fillRect(col * pixelSize, row * pixelSize, pixelSize, pixelSize);
+  }
+
+  const link = document.createElement("a");
+  link.href = canvas.toDataURL("image/png");
+  link.download = `etch-${gridSize}x${gridSize}.png`;
+  link.click();
 });
 
 createGrid(gridSize);
 </script>
-
 </body>
 </html>

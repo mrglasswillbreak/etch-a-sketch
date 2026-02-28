@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="Etch-a-Sketch customized drawing preview">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <rect x="0" y="0" width="1280" height="86" fill="#111827" stroke="#334155"/>
+  <text x="28" y="35" font-size="20" font-family="Arial, sans-serif" fill="#e5e7eb" font-weight="700">Etch-a-Sketch+ Controls</text>
+  <text x="30" y="62" font-size="14" font-family="Arial, sans-serif" fill="#93c5fd">Grid 64×64 • Mode Rainbow • Brush 3 • Grid lines hidden</text>
+  <rect x="20" y="105" width="1240" height="595" fill="#ffffff"/>
+  <g fill="none" stroke-linecap="round" stroke-width="16" opacity="0.92">
+    <path d="M160 230 C 260 180, 340 300, 450 280 C 540 265, 650 170, 760 260" stroke="#22c55e"/>
+    <path d="M180 330 C 300 410, 440 360, 560 450 C 680 540, 840 520, 980 610" stroke="#f43f5e"/>
+    <path d="M320 590 C 420 500, 520 500, 620 410 C 760 290, 920 310, 1120 220" stroke="#3b82f6"/>
+    <path d="M220 180 C 280 240, 360 220, 430 180 C 510 130, 620 130, 700 190" stroke="#f59e0b"/>
+  </g>
+</svg>
