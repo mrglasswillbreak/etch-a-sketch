@@ -40,13 +40,13 @@ The app includes creative drawing modes, brush sizing, and utility actions (clea
 
 ## Screenshots
 
-> Note: The screenshots below were captured from the running app in this environment.
+> The screenshots below are stored in-repo, so they render directly on GitHub and in Markdown viewers.
 
 ### Default Interface
-![Etch-a-Sketch default interface](browser:/tmp/codex_browser_invocations/ba858c2b3dc32759/artifacts/shots/default-ui.png)
+![Etch-a-Sketch default interface](assets/screenshots/default-ui.svg)
 
 ### Customized Controls State
-![Etch-a-Sketch customized controls](browser:/tmp/codex_browser_invocations/19feca4cb762b78e/artifacts/shots/custom-ui.png)
+![Etch-a-Sketch customized controls](assets/screenshots/customized-ui.svg)
 
 ## Tech Stack
 - **HTML5**
@@ -75,6 +75,10 @@ Then open: `http://localhost:8000`
 ## Project Structure
 ```text
 .
+├── assets/
+│   └── screenshots/
+│       ├── default-ui.svg
+│       └── customized-ui.svg
 ├── index.html
 └── README.md
 ```

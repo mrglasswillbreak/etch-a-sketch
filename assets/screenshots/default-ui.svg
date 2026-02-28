@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="Etch-a-Sketch default interface preview">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#f7f9fd"/>
+      <stop offset="1" stop-color="#eef2ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1280" height="86" fill="#ffffff" stroke="#d4d9e7"/>
+  <text x="28" y="35" font-size="20" font-family="Arial, sans-serif" fill="#1f2937" font-weight="700">Etch-a-Sketch+ Controls</text>
+  <text x="30" y="62" font-size="14" font-family="Arial, sans-serif" fill="#4b5563">Grid 40×40 • Mode Grayscale • Brush 1 • 0 filled / 1600 total</text>
+  <rect x="20" y="105" width="1240" height="595" fill="#ffffff" stroke="#d6dbe8"/>
+  <g stroke="#e5e7eb" stroke-width="1">
+    <path d="M20 165H1260M20 225H1260M20 285H1260M20 345H1260M20 405H1260M20 465H1260M20 525H1260M20 585H1260M20 645H1260"/>
+    <path d="M140 105V700M260 105V700M380 105V700M500 105V700M620 105V700M740 105V700M860 105V700M980 105V700M1100 105V700"/>
+  </g>
+</svg>
