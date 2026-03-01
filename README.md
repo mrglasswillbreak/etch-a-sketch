@@ -1,7 +1,7 @@
 # Etch-a-Sketch+
 
 A modern, responsive **Etch-a-Sketch web app** built with plain HTML, CSS, and JavaScript.
-It supports desktop and touch drawing with multiple brush modes, quick controls, and PNG export.
+It supports desktop, tablet, and touch drawing with multiple brush modes, quick controls, and PNG export.
 
 ## Table of Contents
 - [Overview](#overview)
