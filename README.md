@@ -3,6 +3,9 @@
 A modern, responsive **Etch-a-Sketch web app** built with plain HTML, CSS, and JavaScript.
 It supports desktop, tablet, and touch drawing with multiple brush modes, quick controls, and PNG export.
 
+## Live Demo
+- **GitHub Pages:** https://mrglasswillbreak.github.io/etch-a-sketch/
+
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
@@ -38,6 +41,17 @@ The app includes creative drawing modes, brush sizing, and utility actions (clea
 - Responsive layout with compact top control bar
 - Dark-mode aware UI via `prefers-color-scheme`
 
+## Project Structure
+```text
+.
+├── assets/
+│   └── screenshots/
+│       ├── default-ui.svg
+│       └── customized-ui.svg
+├── index.html
+└── README.md
+```
+
 ## Screenshots
 
 > The screenshots below are stored in-repo, so they render directly on GitHub and in Markdown viewers.
@@ -71,17 +85,6 @@ Then open: `http://localhost:8000`
 4. Set **Brush** size.
 5. Draw on the board using mouse or touch.
 6. Use **Clear**, **Hide/Show Grid Lines**, or **Save PNG** as needed.
-
-## Project Structure
-```text
-.
-├── assets/
-│   └── screenshots/
-│       ├── default-ui.svg
-│       └── customized-ui.svg
-├── index.html
-└── README.md
-```
 
 ## Roadmap
 - Undo / redo history
